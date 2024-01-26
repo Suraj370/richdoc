@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/Usercontext";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const Home = () => {
       try {
         if (user) {
           const response = await axios.get(
-            `http://localhost:3001/document/${user._id}`,
+            `http://localhost:3001/document/getDocs`,
             { withCredentials: true }
           );
 
@@ -38,6 +40,7 @@ const Home = () => {
         { withCredentials: true }
       );
 
+      toast.success("document created successfully");
 
       // Use navigate to redirect to the specific document route
       navigate(`/document/${response.data?.document._id}`);
@@ -48,22 +51,20 @@ const Home = () => {
 
   const onDeleteDocument = async (documentId) => {
     try {
-      await axios.delete(`http://localhost:3001/document/deletedoc/${user._Id}`, {
-        withCredentials: true,
-      });
+      const token = Cookies.get('accessToken')
+      const response = await axios.delete(
+        "http://localhost:3001/document/deletedoc",
+        documentId,
+       {
+        headers: {
+          'Authorization' : `Bearer ${token}`
+        }
+       }
+      );
 
-      // Remove the deleted document from the state
       setUserDocuments((prevDocuments) =>
         prevDocuments.filter((doc) => doc._id !== documentId)
       );
-
-      // If user is available, update the user's documents references
-      if (user) {
-        // Assuming you have a backend route to update user's documents
-        await axios.put(`http://localhost:3001/user/removedoc/${user._id}`, {
-          documentId: documentId,
-        });
-      }
     } catch (e) {
       setError(e.message);
     }
@@ -110,7 +111,9 @@ const Home = () => {
             </div>
           ))}
           {!user && (
-            <p className="text-gray-600 col-span-full">You must be signed in to view docs</p>
+            <p className="text-gray-600 col-span-full">
+              You must be signed in to view docs
+            </p>
           )}
         </div>
       </div>
