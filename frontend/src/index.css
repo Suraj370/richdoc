@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100vh; /* Use 'height' instead of 'min-height' */
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100%;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Light.ttf");
+}
+
+
+
+.quill-container .ql-editor{
+  width: 8.5in;
+  min-height: 11in;
+  padding: 1in;
+  margin: 1rem;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+  background-color: #f3f3f3;
+}
+
+
+.quill-container .ql-container.ql-snow{
+  border: none;
+  display: flex;
+  justify-content: center;
+  
+}
+
+.quill-container .ql-toolbar.ql-snow{
+  border: none;
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f3f3f3;
+  border: none;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+  
+}
+
+@page{
+  margin: 1in;
+}
+
+@media print{
+  body{
+    background: none;
+  }
+
+  .quill-container .ql-editor{
+    width: 6.5in;
+    height: 6in;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    align-self: flex-start;
+  }
+
+  .quill-container .ql-toolbar.ql-snow{
+    display: none;
+  }
+}
