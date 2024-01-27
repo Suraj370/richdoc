@@ -7,7 +7,7 @@ const Document = (props) => {
   
   return (
   <div>
-    documentId : {id}
+    <Editor/>
   </div>
   )
 }

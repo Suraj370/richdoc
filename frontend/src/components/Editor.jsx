@@ -21,7 +21,7 @@ const Editor = () => {
   // console.log(documentId);
 
   useEffect(() => {
-    const s = io("http://localhost:3002");
+    const s = io("http://localhost:3001");
     setSocket(s);
     return () => {
       s.disconnect();
@@ -69,7 +69,7 @@ const Editor = () => {
     wrapper.append(editor);
     const q = new Quill(editor, {
       theme: "snow",
-      readOnly: true,
+      readOnly: false,
       modules: {
         toolbar: TOOLBAR_OPTIONS,
       },

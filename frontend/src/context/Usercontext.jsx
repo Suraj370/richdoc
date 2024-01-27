@@ -15,7 +15,6 @@ export const UserProvider = ({ children }) => {
         });
 
         toast.success("User Fetched successfully");
-        console.log(response?.data.user);
 
         setUser(response?.data.user);
       } catch (error) {
@@ -35,10 +34,7 @@ export const UserProvider = ({ children }) => {
         "http://localhost:3001/auth/signin",
         data
       );
-      localStorage.setItem(
-        "accessToken",
-        JSON.stringify(response.data?.accessToken)
-      );
+      
       Cookies.set("accessToken", response.data?.accessToken);
 
       setUser(response.data?.user);
@@ -86,7 +82,7 @@ export const UserProvider = ({ children }) => {
     }
   };
   return (
-    <Usercontext.Provider value={{ user, setUser, signin, signup, signout }}>
+    <Usercontext.Provider value={{ user, signin, signup, signout }}>
       {children}
     </Usercontext.Provider>
   );

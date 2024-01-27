@@ -1,12 +1,13 @@
 const asyncHandler = require("../utils/asyncHandler");
 const User = require("../model/user.model");
 const Document = require("../model/document.model");
+const ApiError = require("../utils/ApiError");
 
 const createDoc = asyncHandler(async (req, res) => {
   try {
     const uid = req.user._id;
     const { title, content } = req.body;
-    
+
     const user = await User.findById(uid);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -31,7 +32,7 @@ const createDoc = asyncHandler(async (req, res) => {
 
 async function getDocuments(req, res) {
   try {
-    const userId = req.params.userId;
+    const userId = req.user._id;
 
     // Fetch documents where createdBy is the specified user ID
     const documents = await Document.find({ createdBy: userId });
@@ -43,33 +44,29 @@ async function getDocuments(req, res) {
   }
 }
 
-
-const deletedoc = async(req, res) => {
+const deletedoc = async (req, res) => {
   try {
-    const documentId = req.body.documentId
-    const userId = req.params.userId;
+    const documentId = req.body.documentId;
+    console.log(documentId);
 
-    // Find the document by ID and delete it
+    if (!documentId) {
+      return res.status(400).json({success: false, message: "no document found "})
+    }
+
     await Document.findByIdAndDelete(documentId);
-    await User.findByIdAndUpdate(userId, { $pull: { documents: documentId } });
 
-    
-
-    res.status(204).send(); // 204 No Content indicates successful deletion
+    res.status(204).send();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
-
-
-const accessDoc =asyncHandler(async(req, res) => {
+const accessDoc = asyncHandler(async (req, res) => {
   try {
-    const uid = req.user._id
+    const uid = req.user._id;
     const { userId, read, write } = req.body;
     const documentId = req.params.documentId;
-
 
     // Check if the document exists
     const document = await Document.findById(documentId);
@@ -78,22 +75,39 @@ const accessDoc =asyncHandler(async(req, res) => {
     }
 
     if (document.createdBy.toString() !== userId) {
-      return res.status(403).json({ message: "Permission denied. You are not the owner of this document." });
+      return res
+        .status(403)
+        .json({
+          message: "Permission denied. You are not the owner of this document.",
+        });
     }
 
-    const accessIndex = document.access.findIndex((access) => access.user.toString() === userId);
+    const accessIndex = document.access.findIndex(
+      (access) => access.user.toString() === userId
+    );
     if (accessIndex !== -1) {
-      document.access[accessIndex].read = read || document.access[accessIndex].read;
-      document.access[accessIndex].write = write || document.access[accessIndex].write;
+      document.access[accessIndex].read =
+        read || document.access[accessIndex].read;
+      document.access[accessIndex].write =
+        write || document.access[accessIndex].write;
     } else {
-      document.access.push({ user: userId, read: read || false, write: write || false });
+      document.access.push({
+        user: userId,
+        read: read || false,
+        write: write || false,
+      });
     }
 
     const updatedDocument = await document.save();
 
-    res.status(200).json({ message: "Access control updated successfully", document: updatedDocument });
+    res
+      .status(200)
+      .json({
+        message: "Access control updated successfully",
+        document: updatedDocument,
+      });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
-})
-module.exports = {createDoc, accessDoc, getDocuments, deletedoc}
+});
+module.exports = { createDoc, accessDoc, getDocuments, deletedoc };

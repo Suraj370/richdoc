@@ -51,7 +51,7 @@ const Home = () => {
 
   const onDeleteDocument = async (documentId) => {
     try {
-      const token = Cookies.get('accessToken')
+      const token = Cookies.get('accessToken') 
       const response = await axios.delete(
         "http://localhost:3001/document/deletedoc",
         documentId,
