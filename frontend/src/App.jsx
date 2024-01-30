@@ -6,7 +6,6 @@ import {
   Route,
   RouterProvider
 } from "react-router-dom";
-import "./App.css";
 import Home from "./pages/Home";
 import Error from "./pages/Error";
 import SignIn from "./pages/SignIn";
@@ -14,6 +13,7 @@ import Signup from "./pages/Signup";
 import Navbar from "./components/Navbar";
 import Document from "./pages/document";
 import { useAuth } from "./context/Usercontext";
+import Modal from "./components/Modal";
 
 function App() {
 
@@ -39,13 +39,17 @@ function App() {
 }
 const Root = () => {
 
-  con
+  const {openModal} = useAuth();
+
+  
+  
 
   return (
     <>
       <div className="flex flex-col min-h-screen">
          <Navbar/>
         <Outlet/>
+        {openModal && <Modal />}
       </div>
     </>
   );

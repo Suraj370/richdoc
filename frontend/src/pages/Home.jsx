@@ -16,7 +16,7 @@ const Home = () => {
       try {
         if (user) {
           const response = await axios.get(
-            `http://localhost:3001/document/getDocs`,
+            `${import.meta.env.VITE_BASE_URL}/document/getall`,
             { withCredentials: true }
           );
 
@@ -35,7 +35,7 @@ const Home = () => {
       const data = { title: "Untitled", content: "Untitled" };
 
       const response = await axios.post(
-        "http://localhost:3001/document/createdoc",
+        `${import.meta.env.VITE_BASE_URL}/document/createdoc`,
         data,
         { withCredentials: true }
       );
@@ -51,16 +51,15 @@ const Home = () => {
 
   const onDeleteDocument = async (documentId) => {
     try {
-      const token = Cookies.get('accessToken') 
-      const response = await axios.delete(
-        "http://localhost:3001/document/deletedoc",
-        documentId,
-       {
+      const token = Cookies.get("accessToken");
+      const response = await axios.delete( `${import.meta.env.VITE_BASE_URL}/document/deletedoc`, {
         headers: {
-          'Authorization' : `Bearer ${token}`
+          Authorization: token
+        },
+        data: {
+         documentId
         }
-       }
-      );
+      });
 
       setUserDocuments((prevDocuments) =>
         prevDocuments.filter((doc) => doc._id !== documentId)
@@ -116,10 +115,6 @@ const Home = () => {
             </p>
           )}
         </div>
-      </div>
-      <div className="flex flex-col flex-grow mt-8">
-        <h1 className="text-3xl font-bold text-gray-800">Shared Documents</h1>
-        <div className="text-gray-600">No Documents found</div>
       </div>
     </div>
   );

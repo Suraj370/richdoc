@@ -14,12 +14,10 @@ const TOOLBAR_OPTIONS = [
   [{ align: [] }],
   ["image", "blockquote", "code-block"]["clean"],
 ];
-const Editor = () => {
+const Editor = ({read}) => {
   const { id: documentId } = useParams();
   const [socket, setSocket] = useState();
   const [quill, setQuill] = useState();
-  // console.log(documentId);
-
   useEffect(() => {
     const s = io("http://localhost:3001");
     setSocket(s);
@@ -69,7 +67,7 @@ const Editor = () => {
     wrapper.append(editor);
     const q = new Quill(editor, {
       theme: "snow",
-      readOnly: false,
+      readOnly: read,
       modules: {
         toolbar: TOOLBAR_OPTIONS,
       },
